@@ -4,9 +4,11 @@ from config import settings
 
 app = FastAPI()
 
-# Khởi tạo client MongoDB
 client = AsyncIOMotorClient(settings.MONGODB_URL)
 db = client[settings.DATABASE_NAME]
+users = db["users"]
+
+
 
 @app.get("/")
 async def root():
