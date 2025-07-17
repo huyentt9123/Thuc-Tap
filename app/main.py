@@ -14,7 +14,7 @@ from starlette.middleware.sessions import SessionMiddleware
 app = FastAPI()
 app.add_middleware(SessionMiddleware, secret_key="your_secret_key")
 app.mount("/static", StaticFiles(directory=os.path.join(os.path.dirname(__file__), "static")), name="static")
-templates = Jinja2Templates(directory="templates")
+templates = Jinja2Templates(directory= "app/templates")
 client = AsyncIOMotorClient(settings.MONGODB_URL)
 db = client[settings.DATABASE_NAME]
 users = db["users"]

@@ -46,18 +46,11 @@ from fastapi import Form
 @router.post("/auth/login")
 async def login_api(request: Request,user: UserLogin = Body(...)):
     users = get_users_collection(request)
-    success, message = await login_user(users, user.email, user.password)
+    success, message, db_user = await login_user(users, user.email, user.password)
     if not success:
         raise HTTPException(status_code=400, detail=message)
     # Lưu thông tin user vào session
-    request.session["user"] = {"email": user.email}
+    request.session["user"] = {"email": db_user["email"], "id": str(db_user["_id"])}
     return {"msg": message}
 
 
-# @router.post("/auth/login", response_class=HTMLResponse)
-# async def login_form_post(request: Request, email: str = Form(...), password: str = Form(...)):
-#     users = get_users_collection(request)
-#     success, message = await login_user(users, email, password)
-#     if not success:
-#         return templates.TemplateResponse("auth_template.html", {"request": request, "form_type": "login", "error": message})
-#     return templates.TemplateResponse("auth_template.html", {"request": request, "form_type": "login", "error": "Đăng nhập thành công!"})

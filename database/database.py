@@ -3,4 +3,7 @@ from config import settings
 
 client = AsyncIOMotorClient(settings.MONGODB_URL)
 db = client[settings.DATABASE_NAME]
-users_collection = db["Users"]
+users = db["users"]
+
+def get_database():
+    return db

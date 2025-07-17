@@ -41,5 +41,5 @@ async def register_user(
 async def login_user(users: AsyncIOMotorCollection, email: str, password: str):
     db_user = await users.find_one({"email": email})
     if not db_user or not pwd_context.verify(password, db_user["hashed_password"]):
-        return False, "Invalid credentials"
-    return True, "Login successful"
+        return False, "Invalid credentials", None
+    return True, "Login successful", db_user 
