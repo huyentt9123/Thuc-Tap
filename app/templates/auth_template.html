@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Đăng ký / Đăng nhập</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/static/auth.css">
+</head>
+<body>
+  <div class="sign-up">
+    <div class="circle circle--red"></div>
+    <div class="circle circle--yellow"></div>
+    <div class="circle circle--green"></div>
+    <div class="circle circle--purple"></div>
+
+    <form class="sign-up__form" action="javascript:void(0)">
+      {% if form_type == 'register' or not form_type %}
+      <!-- ĐĂNG KÝ -->
+      <div class="sign-up__content">
+        <h2 class="sign-up__title">Đăng ký</h2>
+        <div id="registerMessage" class="message error">{{ error }}</div>
+
+        <label for="registerEmail">Email:</label>
+        <input type="email" id="registerEmail" required>
+
+        <label for="registerPassword">Mật khẩu:</label>
+        <input type="password" id="registerPassword" required>
+
+        <label for="registerUsername">Tên đăng nhập:</label>
+        <input type="text" id="registerUsername" required>
+
+        <label for="registerPhone">Số điện thoại:</label>
+        <input type="text" id="registerPhone">
+
+        <label for="registerGender">Giới tính:</label>
+        <select id="registerGender">
+          <option value="">Chọn giới tính</option>
+          <option value="male">Nam</option>
+          <option value="female">Nữ</option>
+          <option value="other">Khác</option>
+        </select>
+      </div>
+
+      <div class="sign-up__buttons">
+        <button type="submit" class="btn btn--submit" id="registerBtn">Đăng ký</button>
+        <div class="switch"><a href="/auth/login">Đã có tài khoản? Đăng nhập</a></div>
+      </div>
+      {% elif form_type == 'login' %}
+        <!-- ĐĂNG NHẬP -->
+        <div class="sign-up__content">
+          <h2 class="sign-up__title">Đăng nhập</h2>
+          <div id="loginMessage" class="message error">{{ error }}</div>
+          <label for="loginEmail">Email:</label>
+          <input type="email" id="loginEmail" required>
+          <label for="loginPassword">Mật khẩu:</label>
+          <input type="password" id="loginPassword" required>
+        </div>
+        <div class="sign-up__buttons">
+          <button type="submit" class="btn btn--submit" id="loginBtn">Đăng nhập</button>
+          <div class="switch"><a href="/auth/register">Chưa có tài khoản? Đăng ký</a></div>
+        </div>
+      {% endif %}
+    </form>
+  </div>
+
+  <!-- JavaScript xử lý đăng ký -->
+    {% if form_type == 'register' or not form_type %}
+  <script>
+    document.getElementById("registerBtn").addEventListener("click", async function () {
+      const email = document.getElementById("registerEmail").value;
+      const password = document.getElementById("registerPassword").value;
+      const username = document.getElementById("registerUsername").value;
+      const phone = document.getElementById("registerPhone").value;
+      const gender = document.getElementById("registerGender").value;
+      const msgBox = document.getElementById("registerMessage");
+
+      try {
+        const response = await fetch("/auth/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password, username, phone, gender })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          msgBox.className = "message error";
+          msgBox.innerText = result.detail || "Đăng ký thất bại.";
+        } else {
+          msgBox.className = "message success";
+          msgBox.innerText = result.msg || "Đăng ký thành công!";
+          setTimeout(() => { window.location.href = "/auth/login"; }, 1500);
+        }
+      } catch (err) {
+        msgBox.className = "message error";
+        msgBox.innerText = "Lỗi kết nối máy chủ.";
+      }
+    });
+  </script>
+   {% elif form_type == 'login' %}
+  <script>
+    document.getElementById("loginBtn").addEventListener("click", async function (e) {
+      const email = document.getElementById("loginEmail").value;
+      const password = document.getElementById("loginPassword").value;
+      const msgBox = document.getElementById("loginMessage");
+
+      try {
+        const response = await fetch("/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          msgBox.className = "message error";
+          msgBox.innerText = result.detail || "Đăng nhập thất bại.";
+        } else {
+          msgBox.className = "message success";
+          msgBox.innerText = result.msg || "Đăng nhập thành công!";
+          window.location.href = "/home";
+        }
+      } catch (err) {
+        msgBox.className = "message error";
+        msgBox.innerText = "Lỗi kết";
+     }
+    });
+  </script>
+  {% endif %}
+</body>
