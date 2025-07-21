@@ -135,6 +135,29 @@ textarea {
   text-decoration: none !important;
 }
 
+.button-group .btn-menu {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-radius: 16px;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    transition: background 0.2s;
+    background: linear-gradient(135deg, #c471f5 0%, #fa71cd 100%);
+    color: #fff;
+}
+.button-group .btn-menu.btn-menu-secondary {
+    background: linear-gradient(135deg, #232526 0%, #414345 100%);
+    color: #fff;
+}
+.button-group .btn-menu:active {
+    opacity: 0.85;
+}
+
 .menu-bar {
   display: flex;
   align-items: center;

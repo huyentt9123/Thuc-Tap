@@ -39,9 +39,16 @@ async def home(request: Request, category_id: str = Query(None), edit_id: str = 
     note_to_edit = None
     if edit_id:
         note_to_edit = await get_note_by_id(edit_id)
+    # Thống kê số note theo phân loại
+    note_count_by_category = {}
+    for category in categories:
+        note_count_by_category[category.id] = 0
+    for note in notes:
+        if note.category_id in note_count_by_category:
+            note_count_by_category[note.category_id] += 1
     return templates.TemplateResponse(
         "home_template.html",
-        {"request": request, "categories": categories, "notes": notes, "selected_category": category_id, "note_to_edit": note_to_edit}
+        {"request": request, "categories": categories, "notes": notes, "selected_category": category_id, "note_to_edit": note_to_edit, "note_count_by_category": note_count_by_category}
     )
 
 
