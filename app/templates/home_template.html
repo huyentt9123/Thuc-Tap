@@ -37,6 +37,24 @@
                         </select>
                     </form>
                 </nav>
+                <!-- Nút bấm để hiện form thêm phân loại -->
+                <button type="button" class="btn-menu" onclick="toggleCreateCategory()" style="margin-bottom: 12px;">
+                    <span style="font-size:18px;">&#10133;</span> Thêm phân loại
+                </button>
+                <!-- Form tạo category mới -->
+                <div id="create-category" style="margin-bottom: 30px; display: none;">
+                    <form action="/categories/" method="post" class="create-category-form">
+                        <div style="flex:1;">
+                            <label for="cat_name">Tên phân loại mới:</label>
+                            <input type="text" id="cat_name" name="name" required>
+                        </div>
+                        <div style="flex:2;">
+                            <label for="cat_desc">Mô tả:</label>
+                            <input type="text" id="cat_desc" name="description">
+                        </div>
+                        <button type="submit" class="btn btn--submit">Thêm phân loại</button>
+                    </form>
+                </div>
                 <!-- Form tạo ghi chú -->
                 <div id="create-note" style="margin-bottom: 30px; display: none;">
                     <form action="/notes/create" method="post">
@@ -122,5 +140,16 @@ function insertTag(openTag, closeTag) {
     textarea.focus();
     textarea.selectionStart = textarea.selectionEnd = start + openTag.length + selected.length + closeTag.length;
 }
+</script>
+
+<script>
+    function toggleCreateCategory() {
+        var form = document.getElementById('create-category');
+        if (form.style.display === 'none' || form.style.display === '') {
+            form.style.display = 'block';
+        } else {
+            form.style.display = 'none';
+        }
+    }
 </script>
 

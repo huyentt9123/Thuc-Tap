@@ -10,10 +10,10 @@ async def create_category(category: Category) -> str:
     result = await db[COLLECTION_NAME].insert_one(category.dict(by_alias=True, exclude={"id"}))
     return str(result.inserted_id)
 
-async def get_categories() -> List[Category]:
+async def get_categories_for_user(user_id: str) -> List[Category]:
     categories = []
-    cursor = db[COLLECTION_NAME].find()
+    cursor = db[COLLECTION_NAME].find({"$or": [{"user_id": None}, {"user_id": user_id}]})
     async for document in cursor:
-        document["_id"] = str(document["_id"]) 
+        document["_id"] = str(document["_id"])
         categories.append(Category(**document))
     return categories 
