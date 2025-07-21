@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Request, Depends, Form, status, Query
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
-from app.services.category_service import get_categories
+from app.services.category_service import get_categories_for_user
 from typing import List
 from app.services.note_service import create_note
 from app.models.note import Note
@@ -20,7 +20,7 @@ async def home(request: Request, category_id: str = Query(None), edit_id: str = 
     if not user or not user.get("id"):
         return RedirectResponse(url="/auth/login", status_code=status.HTTP_303_SEE_OTHER)
     user_id = user.get("id")
-    categories = await get_categories()
+    categories = await get_categories_for_user(user_id)
     notes = await get_notes_by_user(user_id, category_id)
     vn_tz = ZoneInfo("Asia/Ho_Chi_Minh")
     for note in notes:
