@@ -3,6 +3,7 @@ from app.models.note import Note
 from typing import Optional
 from datetime import datetime, UTC
 from zoneinfo import ZoneInfo
+from bson import ObjectId
 
 COLLECTION_NAME = "notes"
 db = get_database()
@@ -27,6 +28,22 @@ async def get_notes_by_user(user_id: str, category_id: str = None):
     return notes 
 
 async def delete_note(note_id: str) -> bool:
-    from bson import ObjectId
     result = await db[COLLECTION_NAME].delete_one({"_id": ObjectId(note_id)})
     return result.deleted_count == 1 
+
+
+async def update_note(note_id: str, title: str, content: str, category_id: str) -> bool:
+    result = await db[COLLECTION_NAME].update_one(
+        {"_id": ObjectId(note_id)},
+        {"$set": {"title": title, "content": content, "category_id": category_id}}
+    )
+    return result.modified_count == 1
+
+
+async def get_note_by_id(note_id: str):
+    document = await db[COLLECTION_NAME].find_one({"_id": ObjectId(note_id)})
+    if document:
+        document["_id"] = str(document["_id"])
+        return Note(**document)
+    return None 
+

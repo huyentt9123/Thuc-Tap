@@ -18,8 +18,6 @@
       <!-- ĐĂNG KÝ -->
       <div class="sign-up__content">
         <h2 class="sign-up__title">Đăng ký</h2>
-        <div id="registerMessage" class="message error">{{ error }}</div>
-
         <label for="registerEmail">Email:</label>
         <input type="email" id="registerEmail" required>
 
@@ -46,25 +44,40 @@
         <div class="switch"><a href="/auth/login">Đã có tài khoản? Đăng nhập</a></div>
       </div>
       {% elif form_type == 'login' %}
-        <!-- ĐĂNG NHẬP -->
-        <div class="sign-up__content">
-          <h2 class="sign-up__title">Đăng nhập</h2>
-          <div id="loginMessage" class="message error">{{ error }}</div>
-          <label for="loginEmail">Email:</label>
-          <input type="email" id="loginEmail" required>
-          <label for="loginPassword">Mật khẩu:</label>
-          <input type="password" id="loginPassword" required>
-        </div>
-        <div class="sign-up__buttons">
-          <button type="submit" class="btn btn--submit" id="loginBtn">Đăng nhập</button>
-          <div class="switch"><a href="/auth/register">Chưa có tài khoản? Đăng ký</a></div>
-        </div>
+      <!-- ĐĂNG NHẬP -->
+      <div class="sign-up__content">
+        <h2 class="sign-up__title">Đăng nhập</h2>
+        <label for="loginEmail">Email:</label>
+        <input type="email" id="loginEmail" required>
+
+        <label for="loginPassword">Mật khẩu:</label>
+        <input type="password" id="loginPassword" required>
+      </div>
+      <div class="sign-up__buttons">
+        <button type="submit" class="btn btn--submit" id="loginBtn">Đăng nhập</button>
+        <div class="switch"><a href="/auth/register">Chưa có tài khoản? Đăng ký</a></div>
+      </div>
       {% endif %}
     </form>
   </div>
 
-  <!-- JavaScript xử lý đăng ký -->
-    {% if form_type == 'register' or not form_type %}
+  <!-- Popup thông báo -->
+  <div id="popupMessage" class="popup-message"></div>
+
+  <!-- JavaScript xử lý đăng ký và đăng nhập -->
+  <script>
+    function showPopup(message, type = 'success') {
+      const popup = document.getElementById('popupMessage');
+      popup.innerText = message;
+      popup.className = `popup-message ${type}`;
+      popup.style.display = 'block';
+      setTimeout(() => {
+        popup.style.display = 'none';
+      }, 3000);
+    }
+  </script>
+
+  {% if form_type == 'register' or not form_type %}
   <script>
     document.getElementById("registerBtn").addEventListener("click", async function () {
       const email = document.getElementById("registerEmail").value;
@@ -72,7 +85,6 @@
       const username = document.getElementById("registerUsername").value;
       const phone = document.getElementById("registerPhone").value;
       const gender = document.getElementById("registerGender").value;
-      const msgBox = document.getElementById("registerMessage");
 
       try {
         const response = await fetch("/auth/register", {
@@ -84,25 +96,21 @@
         const result = await response.json();
 
         if (!response.ok) {
-          msgBox.className = "message error";
-          msgBox.innerText = result.detail || "Đăng ký thất bại.";
+          showPopup(result.detail || "Đăng ký thất bại.", "error");
         } else {
-          msgBox.className = "message success";
-          msgBox.innerText = result.msg || "Đăng ký thành công!";
+          showPopup(result.msg || "Đăng ký thành công!", "success");
           setTimeout(() => { window.location.href = "/auth/login"; }, 1500);
         }
       } catch (err) {
-        msgBox.className = "message error";
-        msgBox.innerText = "Lỗi kết nối máy chủ.";
+        showPopup("Lỗi kết nối máy chủ.", "error");
       }
     });
   </script>
-   {% elif form_type == 'login' %}
+  {% elif form_type == 'login' %}
   <script>
-    document.getElementById("loginBtn").addEventListener("click", async function (e) {
+    document.getElementById("loginBtn").addEventListener("click", async function () {
       const email = document.getElementById("loginEmail").value;
       const password = document.getElementById("loginPassword").value;
-      const msgBox = document.getElementById("loginMessage");
 
       try {
         const response = await fetch("/auth/login", {
@@ -114,18 +122,16 @@
         const result = await response.json();
 
         if (!response.ok) {
-          msgBox.className = "message error";
-          msgBox.innerText = result.detail || "Đăng nhập thất bại.";
+          showPopup(result.detail || "Đăng nhập thất bại.", "error");
         } else {
-          msgBox.className = "message success";
-          msgBox.innerText = result.msg || "Đăng nhập thành công!";
-          window.location.href = "/home";
+          showPopup(result.msg || "Đăng nhập thành công!", "success");
+          setTimeout(() => { window.location.href = "/home"; }, 1500);
         }
       } catch (err) {
-        msgBox.className = "message error";
-        msgBox.innerText = "Lỗi kết";
-     }
+        showPopup("Lỗi kết nối máy chủ.", "error");
+      }
     });
   </script>
   {% endif %}
 </body>
+</html>
