@@ -25,3 +25,8 @@ async def get_notes_by_user(user_id: str, category_id: str = None):
         document["_id"] = str(document["_id"])
         notes.append(Note(**document))
     return notes 
+
+async def delete_note(note_id: str) -> bool:
+    from bson import ObjectId
+    result = await db[COLLECTION_NAME].delete_one({"_id": ObjectId(note_id)})
+    return result.deleted_count == 1 

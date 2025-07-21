@@ -6,6 +6,7 @@ from typing import List
 from app.services.note_service import create_note
 from app.models.note import Note
 from app.services.note_service import get_notes_by_user
+from app.services.note_service import delete_note
 from zoneinfo import ZoneInfo
 
 router = APIRouter()
@@ -52,5 +53,14 @@ async def create_note_route(
     user_id = user.get("id")  # hoặc user.get("id") nếu bạn lưu id
     note = Note(title=title, content=content, user_id=user_id, category_id=category_id)
     await create_note(note)
+    return RedirectResponse(url="/home", status_code=status.HTTP_303_SEE_OTHER)
+
+
+@router.post("/notes/delete")
+async def delete_note_route(request: Request, note_id: str = Form(...)):
+    user = request.session.get("user")
+    if not user:
+        return RedirectResponse(url="/auth/login", status_code=status.HTTP_303_SEE_OTHER)
+    await delete_note(note_id)
     return RedirectResponse(url="/home", status_code=status.HTTP_303_SEE_OTHER)
 

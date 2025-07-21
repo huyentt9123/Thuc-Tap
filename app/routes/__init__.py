@@ -1,7 +1,7 @@
 # Import tất cả các router ở đây
-from .auth import router as auth_router
-from .home import router as home_router
-from .category import router as category_router
+from .auth_route import router as auth_router
+from .home_route import router as home_router
+from .category_route import router as category_router
 
 # Nếu có nhiều router, import thêm ở đây
 
