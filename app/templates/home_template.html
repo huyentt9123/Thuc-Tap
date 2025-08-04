@@ -120,6 +120,39 @@
                     </form>
                 </div>
                 {% endif %}
+                <!-- Thanh tìm kiếm ghi chú -->
+                <div class="search-bar" style="margin-bottom: 18px; display: flex; gap: 8px; align-items: center; max-width: 420px;">
+                    <input type="text" id="search-input" placeholder="Tìm kiếm ghi chú..." style="flex:1; padding:7px 12px; border-radius:6px; border:1px solid #eee; font-size:15px;">
+                    <button type="button" class="btn-menu" onclick="searchNotes()">
+                        <span style="font-size:18px;">&#128269;</span> Tìm kiếm
+                    </button>
+                </div>
+                <!-- Kết quả tìm kiếm -->
+                <div id="search-results" style="margin-bottom: 18px;"></div>
+                <script>
+                async function searchNotes() {
+                    const q = document.getElementById('search-input').value.trim();
+                    const resultsDiv = document.getElementById('search-results');
+                    if (!q) {
+                        resultsDiv.innerHTML = '';
+                        return;
+                    }
+                    resultsDiv.innerHTML = '<em>Đang tìm kiếm...</em>';
+                    try {
+                        const resp = await fetch(`/search/?q=${encodeURIComponent(q)}`);
+                        const data = await resp.json();
+                        if (data.length === 0) {
+                            resultsDiv.innerHTML = '<p>Không tìm thấy ghi chú nào.</p>';
+                        } else {
+                            resultsDiv.innerHTML = '<ul class="note-list">' +
+                                data.map(note => `<li><span class="note-title">${note.title}</span><br><div style='margin:8px 0;'>${note.content}</div></li>`).join('') +
+                                '</ul>';
+                        }
+                    } catch (e) {
+                        resultsDiv.innerHTML = '<span style="color:red;">Lỗi tìm kiếm!</span>';
+                    }
+                }
+                </script>
                 <!-- Danh sách ghi chú -->
                 <h2 style="margin-bottom:10px;">Danh sách ghi chú của bạn</h2>
                 <!-- Thống kê số note theo phân loại -->

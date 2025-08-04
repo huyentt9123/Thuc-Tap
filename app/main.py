@@ -1,6 +1,7 @@
 
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
+from fastapi.responses import RedirectResponse
 from motor.motor_asyncio import AsyncIOMotorClient
 from config import settings
 from fastapi import FastAPI
@@ -30,13 +31,4 @@ for router in all_routers:
 
 @app.get("/", response_class=HTMLResponse)
 async def root():
-    return """
-    <html>
-        <head>
-            <link rel="stylesheet" href="/static/auth.css">
-        </head>
-        <body>
-            <h1 style="color: green;">Hello World</h1>
-        </body>
-    </html>
-    """
+    return RedirectResponse(url="/auth/login")
