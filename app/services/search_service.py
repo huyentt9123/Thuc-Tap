@@ -19,5 +19,9 @@ async def search_notes_in_es(q: str, user_id: str):
             }
         }
     )
-    results = [hit["_source"] for hit in resp["hits"]["hits"]]
+    results = []
+    for hit in resp["hits"]["hits"]:
+        source = hit["_source"]
+        source["id"] = hit["_id"]  # Add the _id as id
+        results.append(source)
     return results
